@@ -39,59 +39,57 @@ export const AlbumListPage: FC<Props> = ({ navigation, route }) => {
   }, []);
 
   return (
-    <SafeAreaView>
-      <FlatList
-        data={albums}
-        onRefresh={async () => {
-          setIsRefreshing(true);
-          try {
-            const response = await axios.get("/albums");
-            const albums = response.data.map((album: unknown) =>
-              AlbumSchema.parse(album),
-            );
-            dispatch(setAlbums(albums));
-          } catch (_) {
-            dispatch(setError("Failed to load albums. Please try again."));
-          }
-          setIsRefreshing(false);
-        }}
-        refreshing={isRefreshing}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Album", { album: item });
-            }}
+    <FlatList
+      data={albums}
+      onRefresh={async () => {
+        setIsRefreshing(true);
+        try {
+          const response = await axios.get("/albums");
+          const albums = response.data.map((album: unknown) =>
+            AlbumSchema.parse(album),
+          );
+          dispatch(setAlbums(albums));
+        } catch (_) {
+          dispatch(setError("Failed to load albums. Please try again."));
+        }
+        setIsRefreshing(false);
+      }}
+      refreshing={isRefreshing}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Album", { album: item });
+          }}
+        >
+          <Animated.View
+            layout={Layout.springify()}
+            entering={LightSpeedInLeft}
+            exiting={LightSpeedOutRight}
           >
-            <Animated.View
-              layout={Layout.springify()}
-              entering={LightSpeedInLeft}
-              exiting={LightSpeedOutRight}
-            >
-              <List.Item
-                key={item.id}
-                title={item.title}
-                onPress={() => navigation.navigate("Album", { album: item })}
-                right={(props) => (
-                  <TouchableOpacity
-                    {...props}
-                    onPress={async () => {
-                      try {
-                        await axios.delete(`/albums/${item.id}`);
-                        dispatch(removeAlbum(item.id));
-                      } catch (_) {
-                        setError?.("Failed to delete album. Please try again.");
-                      }
-                    }}
-                  >
-                    <List.Icon {...props} icon="delete" />
-                  </TouchableOpacity>
-                )}
-              />
-            </Animated.View>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </SafeAreaView>
+            <List.Item
+              key={item.id}
+              title={item.title}
+              onPress={() => navigation.navigate("Album", { album: item })}
+              right={(props) => (
+                <TouchableOpacity
+                  {...props}
+                  onPress={async () => {
+                    try {
+                      await axios.delete(`/albums/${item.id}`);
+                      dispatch(removeAlbum(item.id));
+                    } catch (_) {
+                      setError?.("Failed to delete album. Please try again.");
+                    }
+                  }}
+                >
+                  <List.Icon {...props} icon="delete" />
+                </TouchableOpacity>
+              )}
+            />
+          </Animated.View>
+        </TouchableOpacity>
+      )}
+      keyExtractor={(item) => item.id.toString()}
+    />
   );
 };

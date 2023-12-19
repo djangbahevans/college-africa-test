@@ -33,35 +33,33 @@ export const AlbumPage: FC<Props> = ({ route, navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView>
-      <FlatList
-        data={images}
-        renderItem={({ item }) => (
-          <Image
-            source={{ uri: item.thumbnailUrl }}
-            style={{
-              aspectRatio: 1,
-              flex: 1 / numColumns,
-            }}
-          />
-        )}
-        onRefresh={async () => {
-          setIsRefreshing(true);
-          try {
-            const response = await axios.get(`/albums/${album.id}/photos`);
-            const photos = response.data.map((album: unknown) =>
-              PhotoSchema.parse(album),
-            );
-            setImages(photos);
-          } catch (_) {
-            dispatch(setError("Failed to load photos. Please try again."));
-          }
-          setIsRefreshing(false);
-        }}
-        refreshing={isRefreshing}
-        numColumns={numColumns}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={images}
+      renderItem={({ item }) => (
+        <Image
+          source={{ uri: item.thumbnailUrl }}
+          style={{
+            aspectRatio: 1,
+            flex: 1 / numColumns,
+          }}
+        />
+      )}
+      onRefresh={async () => {
+        setIsRefreshing(true);
+        try {
+          const response = await axios.get(`/albums/${album.id}/photos`);
+          const photos = response.data.map((album: unknown) =>
+            PhotoSchema.parse(album),
+          );
+          setImages(photos);
+        } catch (_) {
+          dispatch(setError("Failed to load photos. Please try again."));
+        }
+        setIsRefreshing(false);
+      }}
+      refreshing={isRefreshing}
+      numColumns={numColumns}
+      keyExtractor={(item) => item.id.toString()}
+    />
   );
 };
