@@ -1,13 +1,12 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FC, useEffect, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
-import { List } from "react-native-paper";
+import { Divider, List } from "react-native-paper";
 import Animated, {
   Layout,
   LightSpeedInLeft,
   LightSpeedOutRight,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { RootStackParamList } from "../app/navigation";
 import { AlbumSchema } from "../app/types";
@@ -55,6 +54,7 @@ export const AlbumListPage: FC<Props> = ({ navigation, route }) => {
         setIsRefreshing(false);
       }}
       refreshing={isRefreshing}
+      ItemSeparatorComponent={() => <Divider />}
       renderItem={({ item }) => (
         <TouchableOpacity
           onPress={() => {
