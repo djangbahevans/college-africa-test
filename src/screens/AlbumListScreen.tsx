@@ -2,7 +2,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
-import { FC, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import {
   FlatList,
   GestureResponderEvent,
@@ -24,7 +24,7 @@ import { setError } from "../store/error";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AlbumList">;
 
-export const AlbumListPage: FC<Props> = ({ navigation, route }) => {
+export const AlbumListPage: FC<Props> = ({ navigation }) => {
   const albums = useAppSelector((state) => state.albums);
   const dispatch = useAppDispatch();
 
@@ -65,6 +65,7 @@ export const AlbumListPage: FC<Props> = ({ navigation, route }) => {
       }}
       refreshing={isRefreshing}
       ItemSeparatorComponent={() => <Divider />}
+      removeClippedSubviews
       renderItem={({ item }) => (
         <ListItem
           item={item}
@@ -85,7 +86,7 @@ const ListItem: FC<{
     "AlbumList",
     undefined
   >;
-}> = ({ item, onDelete, navigation }) => {
+}> = memo(({ item, onDelete, navigation }) => {
   const [deleting, setDeleting] = useState(false);
 
   const onPress = (event: GestureResponderEvent) => {
@@ -122,4 +123,4 @@ const ListItem: FC<{
       </Animated.View>
     </TouchableOpacity>
   );
-};
+});
