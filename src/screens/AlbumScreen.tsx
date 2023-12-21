@@ -18,18 +18,20 @@ export const AlbumPage: FC<Props> = ({ route, navigation }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dispatch = useAppDispatch();
 
+  const fetchPhotos = async () => {
+    try {
+      const response = await axios.get(`/albums/${album.id}/photos`);
+      const photos = response.data.map((photo: unknown) =>
+        PhotoSchema.parse(photo),
+      );
+      setImages(photos);
+    } catch (_) {
+      dispatch(setError("Failed to load photos. Please try again."));
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get(`/albums/${album.id}/photos`)
-      .then((response: { data: unknown[] }) => {
-        const photos = response.data.map((photo: unknown) =>
-          PhotoSchema.parse(photo),
-        );
-        setImages(photos);
-      })
-      .catch(() => {
-        dispatch(setError("Failed to load photos. Please try again."));
-      });
+    fetchPhotos();
   }, []);
 
   return (
@@ -46,15 +48,7 @@ export const AlbumPage: FC<Props> = ({ route, navigation }) => {
       )}
       onRefresh={async () => {
         setIsRefreshing(true);
-        try {
-          const response = await axios.get(`/albums/${album.id}/photos`);
-          const photos = response.data.map((album: unknown) =>
-            PhotoSchema.parse(album),
-          );
-          setImages(photos);
-        } catch (_) {
-          dispatch(setError("Failed to load photos. Please try again."));
-        }
+        await fetchPhotos();
         setIsRefreshing(false);
       }}
       refreshing={isRefreshing}
